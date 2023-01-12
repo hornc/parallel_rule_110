@@ -185,10 +185,10 @@ def naive_parallel_method(row, iters, splits=2):
         # Interleave pipes so that wraparound works properly
         if i == splits - 1:
             left, right = pipes[i][0], pipes[0][1]
-            start, end = len(row)/splits * i, len(row)
+            start, end = len(row) // splits * i, len(row)
         else:
             left, right = pipes[i][0], pipes[i+1][1]
-            start, end = len(row)/splits * i, len(row)/splits * (i+1)
+            start, end = len(row) // splits * i, len(row) // splits * (i + 1)
 
         # Create process for this section
         p = Process(target=process_section,
@@ -205,7 +205,7 @@ def naive_parallel_method(row, iters, splits=2):
 
         proc_id, result = q.get()
         for i, v in enumerate(result):
-            row[len(row)/splits * proc_id + i] = v
+            row[len(row) // splits * proc_id + i] = v
     return row
 
 
@@ -222,10 +222,10 @@ def main():
     inital_state = lambda: [False]*1000 + [True, False]
 
     std_result, std_elapsed = standard_method(inital_state(), iterations)
-    print "Single process method time:", std_elapsed
+    print("Single process method time:", std_elapsed)
 
     par_result, par_elapsed = naive_parallel_method(inital_state(), iterations, splits=4)
-    print "Multi-process method time: ", par_elapsed
+    print("Multi-process method time: ", par_elapsed)
 
     # Sanity check
     assert std_result == par_result
